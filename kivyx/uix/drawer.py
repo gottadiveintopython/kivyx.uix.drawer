@@ -82,7 +82,7 @@ class KXDrawer(RelativeLayout):
     auto_bring_to_front = BooleanProperty(False)
     '''If True, moves myself on top of the other siblings when opened.'''
 
-    duration = NumericProperty(.3)
+    anim_duration = NumericProperty(.3)
     '''Duration of the opening/closing animations.'''
 
     background_color = ColorProperty("#222222")
@@ -158,20 +158,20 @@ class KXDrawer(RelativeLayout):
                 self._is_moving_to_the_top = False
             del ph[pos_key_c]
             await ak.animate(
-                self, d=self.duration,
+                self, d=self.anim_duration,
                 **{pos_key_o: _get_pos_value_in_local_coordinates()})
             close_event.clear()
-            await ak.animate(tab, d=self.duration, icon_angle=icon_angle_o)
+            await ak.animate(tab, d=self.anim_duration, icon_angle=icon_angle_o)
             ph[pos_key_o] = ph_value
             self.dispatch('on_open')
             await ak.or_(ak.event(tab, 'on_press'), close_event.wait())
             self.dispatch('on_pre_close')
             del ph[pos_key_o]
             await ak.animate(
-                self, d=self.duration,
+                self, d=self.anim_duration,
                 **{pos_key_c: _get_pos_value_in_local_coordinates()})
             open_event.clear()
-            await ak.animate(tab, d=self.duration, icon_angle=icon_angle_c)
+            await ak.animate(tab, d=self.anim_duration, icon_angle=icon_angle_c)
             ph[pos_key_c] = ph_value
             self.dispatch('on_close')
 
