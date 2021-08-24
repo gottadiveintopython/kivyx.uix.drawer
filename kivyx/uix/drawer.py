@@ -73,14 +73,14 @@ class KXDrawerTab(ButtonBehavior, Widget):
         self.size_hint = (.4, None) if anchor in 'tb' else (None, .4)
         self.pos_hint = __[anchor].copy()
 
-    __ = None
+    del __
 
 
 class KXDrawer(RelativeLayout):
     __events__ = ('on_pre_open', 'on_open', 'on_pre_close', 'on_close', )
 
     auto_bring_to_front = BooleanProperty(False)
-    '''If True, moves myself on top of the other siblings when opened.'''
+    '''If True, moves the drawer on top of the other siblings when it opens.'''
 
     anim_duration = NumericProperty(.3)
     '''Duration of the opening/closing animations.'''
@@ -112,7 +112,7 @@ class KXDrawer(RelativeLayout):
         trigger()
 
     def on_parent(self, __, parent):
-        if parent and (not isinstance(parent, FloatLayout)):
+        if parent is not None and (not isinstance(parent, FloatLayout)):
             raise ValueError("KXDrawer needs to be a child of FloatLayout!!")
         if self._is_moving_to_the_top:
             return
@@ -130,7 +130,7 @@ class KXDrawer(RelativeLayout):
         moves_vertically = anchor[0] in 'tb'
         moves_forward_direction = anchor[0] in 'lb'
         parent = self.parent
-        tab = self.ids.tab.__self__
+        tab = self.ids.tab
         tab.update(anchor)
         self.pos_hint = ph = _get_initial_pos_hint(anchor)
         # '_c'-suffix means 'close'.  '_o'-suffix means 'open'.
@@ -180,10 +180,12 @@ class KXDrawer(RelativeLayout):
         but doesn't use them at all, so you can bind the method to any event
         directly.
 
-            drawer = KXDrawer()
-            button = Button()
-            button.bind(on_press=drawer.open)
-        '''
+        .. code-block::
+
+           drawer = KXDrawer()
+           button = Button()
+           button.bind(on_press=drawer.open)
+W        '''
         self._open_event.set()
 
     def close(self, *args, **kwargs):
@@ -191,9 +193,11 @@ class KXDrawer(RelativeLayout):
         but doesn't use them at all, so you can bind the method to any event
         directly.
 
-            drawer = KXDrawer()
-            button = Button()
-            button.bind(on_press=drawer.close)
+        .. code-block::
+
+           drawer = KXDrawer()
+           button = Button()
+           button.bind(on_press=drawer.close)
         '''
         self._close_event.set()
 
@@ -243,4 +247,4 @@ def _get_initial_icon_angle(anchor, *, __=__):
     return __[anchor[0]]
 
 
-__ = None
+del __
