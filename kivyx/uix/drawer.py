@@ -40,6 +40,7 @@ KV_CODE = '''
         PopMatrix:
 
 <KXDrawer>:
+    _active: self.parent is not None or self._is_moving_to_the_top
     canvas.before:
         Color:
             rgba: root.background_color
@@ -90,7 +91,7 @@ class KXDrawer(RelativeLayout):
 
     anchor = OptionProperty(
         'lm', options=r'lt lm lb rt rm rb bl bm br tl tm tr'.split())
-    '''Specifies where myself is attached to.
+    '''親のどの位置にくっつくか
 
         'l' stands for 'left'.
         'r' stands for 'right'.
@@ -99,33 +100,38 @@ class KXDrawer(RelativeLayout):
         'm' stands for 'middle'.
     '''
 
-    # default value of the instance attributes
-    _main_task = ak.sleep_forever()
+    _active = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         self._is_moving_to_the_top = False
-        self._trigger_reset = trigger = Clock.create_trigger(self.reset, 0)
         self._open_event = ak.Event()
         self._close_event = ak.Event()
         super().__init__(**kwargs)
-        self.fbind('anchor', trigger)
-        trigger()
+        ak.start(self._main())
+
+    async def _main(self):
+        import asynckivy as ak
+        while True:
+            await ak.sleep(-1)
+            if not self._active:
+                await ak.event(self, '_active')
+            await ak.sleep(-1)
+            if self._active:
+                await ak.or_(ak.event(self, '_active'), self._main2())
+
+    async def _main2(self):
+        import asynckivy as ak
+        while True:
+            await ak.sleep(-1)
+            await ak.or_(ak.event(self, 'anchor'), self._main3())
+
 
     def on_parent(self, __, parent):
         if parent is not None and (not isinstance(parent, FloatLayout)):
             raise ValueError("KXDrawer needs to be a child of FloatLayout!!")
-        if self._is_moving_to_the_top:
-            return
-        self._trigger_reset()
 
-    def reset(self, *args, **kwargs):
-        self._main_task.close()
-        if self.parent is None:
-            return
-        self._main_task = ak.start(self._main())
-        self._main_task.name = 'KXDrawer'
-
-    async def _main(self):
+    async def _main3(self):
+        import asynckivy as ak
         anchor = self.anchor
         moves_vertically = anchor[0] in 'tb'
         moves_forward_direction = anchor[0] in 'lb'
@@ -150,6 +156,7 @@ class KXDrawer(RelativeLayout):
         open_event = self._open_event
         while True:
             await ak.or_(ak.event(tab, 'on_press'), open_event.wait())
+            open_event.clear()
             self.dispatch('on_pre_open')
             if self.auto_bring_to_front:
                 self._is_moving_to_the_top = True
@@ -160,17 +167,16 @@ class KXDrawer(RelativeLayout):
             await ak.animate(
                 self, d=self.anim_duration,
                 **{pos_key_o: _get_pos_value_in_local_coordinates()})
-            close_event.clear()
             await ak.animate(tab, d=self.anim_duration, icon_angle=icon_angle_o)
             ph[pos_key_o] = ph_value
             self.dispatch('on_open')
             await ak.or_(ak.event(tab, 'on_press'), close_event.wait())
+            close_event.clear()
             self.dispatch('on_pre_close')
             del ph[pos_key_o]
             await ak.animate(
                 self, d=self.anim_duration,
                 **{pos_key_c: _get_pos_value_in_local_coordinates()})
-            open_event.clear()
             await ak.animate(tab, d=self.anim_duration, icon_angle=icon_angle_c)
             ph[pos_key_c] = ph_value
             self.dispatch('on_close')
@@ -185,7 +191,7 @@ class KXDrawer(RelativeLayout):
            drawer = KXDrawer()
            button = Button()
            button.bind(on_press=drawer.open)
-W        '''
+        '''
         self._open_event.set()
 
     def close(self, *args, **kwargs):

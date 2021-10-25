@@ -74,6 +74,7 @@ BoxLayout:
                 auto_bring_to_front: True
                 size_hint: None, None
                 size: numpad.size
+                disabled: disabled.active
                 Numpad:
                     id: numpad
             KXDrawer:
@@ -95,12 +96,25 @@ BoxLayout:
         size_hint_min_x: 100
         orientation: 'vertical'
         spacing: dp(4)
+        Label:
+            text: 'disabled'
+            color: 0, 1, 0, 1
+        Switch:
+            id: disabled
+            active: False
+        Separator:
+            size_hint_y: None
+        Label:
+            text: 'methods'
+            color: 0, 1, 0, 1
         Button:
             text: 'open()'
             on_press: drawer.open()
         Button:
             text: 'close()'
             on_press: drawer.close()
+        Separator:
+            size_hint_y: None
         Label:
             text: 'anchor'
             color: 0, 1, 0, 1
