@@ -138,7 +138,8 @@ class KXDrawer(RelativeLayout):
         parent = self.parent
         tab = self.ids.tab
         tab.update(anchor)
-        self.pos_hint = ph = _get_initial_pos_hint(anchor)
+        self.pos_hint = _get_initial_pos_hint(anchor)
+        ph = self.pos_hint  # CAUTION: 上の行とまとめてはいけない
         # '_c'-suffix means 'close'.  '_o'-suffix means 'open'.
         icon_angle_c = _get_initial_icon_angle(anchor)
         icon_angle_o = icon_angle_c + 180.
@@ -151,6 +152,8 @@ class KXDrawer(RelativeLayout):
 
         tab.icon_angle = icon_angle_c
         ph[pos_key_c] = ph_value
+        self.property('pos_hint').dispatch(self)  # 何故か必要
+        await ak.sleep(-1)
 
         close_event = self._close_event
         open_event = self._open_event
