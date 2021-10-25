@@ -16,4 +16,4 @@ MIT
 
 ## Test Environment
 
-- CPython3.8.10 + Kivy2.0.0
+- CPython3.8.12 + Kivy2.0.0
