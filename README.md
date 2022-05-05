@@ -14,6 +14,6 @@ pip install git+https://github.com/gottadiveintopython/kivyx.uix.drawer#egg=kivy
 
 MIT
 
-## Test Environment
+## Tested on
 
-- CPython3.8.12 + Kivy2.0.0
+- CPython3.8.12 + Kivy2.1.0

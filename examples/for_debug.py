@@ -71,15 +71,16 @@ BoxLayout:
             KXDrawer:
                 id: drawer
                 anchor: 'tr'
-                auto_front: True
+                auto_front: auto_front.active
                 size_hint: None, None
                 size: numpad.size
                 disabled: disabled.active
+                anim_duration: anim_duration.value
                 Numpad:
                     id: numpad
             KXDrawer:
                 anchor: 'rt'
-                auto_front: True
+                auto_front: auto_front.active
                 size_hint: None, None
                 size: 100, 100
                 Button:
@@ -93,9 +94,10 @@ BoxLayout:
     BoxLayout:
         id: menu
         size_hint_x: .1
-        size_hint_min_x: 100
+        size_hint_min_x: 200
         orientation: 'vertical'
         spacing: dp(4)
+
         Label:
             text: 'disabled'
             color: 0, 1, 0, 1
@@ -104,6 +106,28 @@ BoxLayout:
             active: False
         Separator:
             size_hint_y: None
+
+        Label:
+            text: 'auto_front'
+            color: 0, 1, 0, 1
+        Switch:
+            id: auto_front
+            active: False
+        Separator:
+            size_hint_y: None
+
+        Label:
+            text: f"anim_duration: {anim_duration.value:0.1f}"
+            color: 0, 1, 0, 1
+        Slider:
+            id: anim_duration
+            min: 0.
+            max: 2.
+            step: .1
+            value: .3
+        Separator:
+            size_hint_y: None
+
         Label:
             text: 'methods'
             color: 0, 1, 0, 1
