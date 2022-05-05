@@ -23,7 +23,7 @@ KV_CODE = '''
 <KXDrawerTab>:
     canvas.before:
         Color:
-            rgba: self.background_color
+            rgba: self.bg_color
         Rectangle:
             pos: self.pos
             size: self.size
@@ -34,7 +34,7 @@ KV_CODE = '''
         Rotate:
             angle: self.icon_angle
         Color:
-            rgba: self.foreground_color
+            rgba: self.fg_color
         Triangle:
             points: (s := (min(*self.size) * 0.2), ) and [-s, -s, -s, s, s, 0]
         PopMatrix:
@@ -43,21 +43,21 @@ KV_CODE = '''
     _active: self.parent is not None or self._is_moving_to_the_top
     canvas.before:
         Color:
-            rgba: root.background_color
+            rgba: root.bg_color
         Rectangle:
             pos: 0, 0
             size: self.size
     KXDrawerTab:
         id: tab
-        background_color: root.background_color
-        foreground_color: root.foreground_color
+        bg_color: root.bg_color
+        fg_color: root.fg_color
 '''
 Builder.load_string(KV_CODE)
 
 
 class KXDrawerTab(ButtonBehavior, Widget):
-    background_color = ColorProperty()
-    foreground_color = ColorProperty()
+    bg_color = ColorProperty()
+    fg_color = ColorProperty()
     icon_angle = NumericProperty(0)
 
     __ = {
@@ -80,14 +80,14 @@ class KXDrawerTab(ButtonBehavior, Widget):
 class KXDrawer(RelativeLayout):
     __events__ = ('on_pre_open', 'on_open', 'on_pre_close', 'on_close', )
 
-    auto_bring_to_front = BooleanProperty(False)
+    auto_front = BooleanProperty(False)
     '''If True, moves the drawer on top of the other siblings when it opens.'''
 
     anim_duration = NumericProperty(.3)
     '''Duration of the opening/closing animations.'''
 
-    background_color = ColorProperty("#222222")
-    foreground_color = ColorProperty("#AAAAAA")
+    bg_color = ColorProperty("#222222")
+    fg_color = ColorProperty("#AAAAAA")
 
     anchor = OptionProperty(
         'lm', options=r'lt lm lb rt rm rb bl bm br tl tm tr'.split())
@@ -161,7 +161,7 @@ class KXDrawer(RelativeLayout):
             await ak.or_(ak.event(tab, 'on_press'), open_event.wait())
             open_event.clear()
             self.dispatch('on_pre_open')
-            if self.auto_bring_to_front:
+            if self.auto_front:
                 self._is_moving_to_the_top = True
                 parent.remove_widget(self)
                 parent.add_widget(self)

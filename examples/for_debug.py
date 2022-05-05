@@ -71,7 +71,7 @@ BoxLayout:
             KXDrawer:
                 id: drawer
                 anchor: 'tr'
-                auto_bring_to_front: True
+                auto_front: True
                 size_hint: None, None
                 size: numpad.size
                 disabled: disabled.active
@@ -79,7 +79,7 @@ BoxLayout:
                     id: numpad
             KXDrawer:
                 anchor: 'rt'
-                auto_bring_to_front: True
+                auto_front: True
                 size_hint: None, None
                 size: 100, 100
                 Button:
