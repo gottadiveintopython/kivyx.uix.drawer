@@ -1,6 +1,7 @@
 __all__ = ('KXDrawer', )
 
 from functools import partial
+from kivy.metrics import sp as metrics_sp
 from kivy.properties import (
     NumericProperty, ColorProperty, OptionProperty, BooleanProperty,
 )
@@ -60,10 +61,9 @@ class KXDrawerTab(ButtonBehavior, Widget):
         't': {'top': 0, 'center_x': .5, },
     }
     def update(self, anchor, __=__):
-        from kivy.metrics import sp
         anchor = anchor[0]
-        self.font_size = font_size = max(sp(15), 24)
-        self.size = self.size_hint_min = (font_size, font_size, )
+        tab_width = max(metrics_sp(15), 24)
+        self.size = self.size_hint_min = (tab_width, tab_width, )
         self.size_hint = (.4, None) if anchor in 'tb' else (None, .4)
         self.pos_hint = __[anchor].copy()
     del __
